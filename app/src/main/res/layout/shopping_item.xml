@@ -23,6 +23,8 @@
         android:gravity="start|center_vertical"
         android:paddingStart="16dp"
         android:textSize="16sp"
+        android:lines="1"
+        android:ellipsize="end"
         android:textStyle="bold"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"

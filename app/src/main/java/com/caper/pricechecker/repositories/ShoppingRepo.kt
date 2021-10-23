@@ -23,7 +23,7 @@ class ShoppingRepo @Inject constructor(
         val lList = ShoppingItems()
 
         for(item in res){
-            lList.add(ShoppingItem(item.id, item.name, item.price, item.qrUrl, item.thumbnail))
+            lList.add(ShoppingItem(item.id, item.name, item.price.replace("$","").toFloat(), item.qrUrl, item.thumbnail,0))
         }
         return lList
     }

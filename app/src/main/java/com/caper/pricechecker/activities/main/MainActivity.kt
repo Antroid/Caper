@@ -2,15 +2,19 @@ package com.caper.pricechecker.activities.main
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.caper.pricechecker.Consts
 import com.caper.pricechecker.R
+import com.caper.pricechecker.activities.cart.CartActivity
 import com.caper.pricechecker.interfaces.ShoppingItemClick
 import com.caper.pricechecker.modal.local.ShoppingItems
+import com.caper.pricechecker.viewmodels.CartViewModel
 import com.caper.pricechecker.viewmodels.MainViewModel
 import com.caper.pricechecker.viewmodels.ViewModelFactory
 import dagger.android.support.DaggerAppCompatActivity
@@ -20,7 +24,7 @@ import javax.inject.Inject
 class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
 
     companion object{
-        private val NO_ITEM_INDEX_SELECTED = -1
+        private const val NO_ITEM_INDEX_SELECTED = -1
     }
 
     @set:Inject
@@ -31,6 +35,7 @@ class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
     private var selectedItemIndex = -1
 
     lateinit var mainViewModel: MainViewModel
+    lateinit var cartViewModel: CartViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +45,8 @@ class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
         adapter = ShoppingItemsAdapter(this)
-        val movieLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        shoppingRecycleViewItems.layoutManager = movieLayoutManager
+        val shoppingLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        shoppingRecycleViewItems.layoutManager = shoppingLayoutManager
         shoppingRecycleViewItems.adapter = adapter
 
         mainViewModel.shoppingItems.observe(this) { data ->
@@ -54,7 +59,11 @@ class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
             if(selectedItemIndex == NO_ITEM_INDEX_SELECTED){
                 Toast.makeText(this, getString(R.string.no_item_selected),Toast.LENGTH_LONG).show()
             }else{
-                //TODO
+                val intent = Intent(this, CartActivity::class.java)
+                val selectedItem = adapter.getItem(selectedItemIndex)
+                selectedItem.quantity++
+                intent.putExtra(Consts.ITEM_INDEX_SELECTED_TO_CARD, selectedItem)
+                startActivity(intent)
             }
         }
 
@@ -63,7 +72,7 @@ class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the options menu from XML
         val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
+        inflater.inflate(R.menu.menu, menu)
 
         // Get the SearchView and set the searchable configuration
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager

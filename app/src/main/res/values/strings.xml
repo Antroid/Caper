@@ -4,4 +4,10 @@
     <string name="no_item_selected">No item selected</string>
     <string name="action_search">Search</string>
     <string name="action_cart">Cart</string>
+    <string name="plus">+</string>
+    <string name="sub">-</string>
+    <string name="no_items">No Items</string>
+    <string name="total">Total</string>
+    <string name="price_holder">$%.2f</string>
+    <string name="total_price">Total: $%.2f</string>
 </resources>

@@ -24,6 +24,8 @@ class ShoppingItemsAdapter(private val listener: ShoppingItemClick): RecyclerVie
         holder.bind(position, data[position])
     }
 
+    fun getItem(position: Int): ShoppingItem = data[position]
+
     override fun getItemCount(): Int = data.size
 
     inner class ShoppingHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -34,7 +36,7 @@ class ShoppingItemsAdapter(private val listener: ShoppingItemClick): RecyclerVie
         fun bind(position: Int, shoppingItem: ShoppingItem) {
             itemName.text = shoppingItem.name
             Glide.with(itemPoster.context).load(shoppingItem.thumbnail).into(itemPoster)
-            itemPrice.text = shoppingItem.price
+            itemPrice.text = itemPrice.context.getString(R.string.price_holder,shoppingItem.price)
             itemView.isSelected = shoppingItem.isSelected
             itemView.setOnClickListener {
                 listener.onItemClick(position)
