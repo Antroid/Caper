@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.caper.pricechecker">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
         android:name=".CaperApplication"
         android:allowBackup="true"
@@ -11,13 +13,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PriceChecker">
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.main.MainActivity"
+            android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
         </activity>
     </application>
 

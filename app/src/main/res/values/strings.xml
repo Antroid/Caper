@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Price Checker</string>
+    <string name="available_items">Available items</string>
+    <string name="no_item_selected">No item selected</string>
+    <string name="action_search">Search</string>
+    <string name="action_cart">Cart</string>
 </resources>

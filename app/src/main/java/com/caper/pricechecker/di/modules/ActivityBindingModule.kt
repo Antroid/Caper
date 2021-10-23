@@ -1,6 +1,6 @@
 package com.caper.pricechecker.di.modules
 
-import com.caper.pricechecker.activities.MainActivity
+import com.caper.pricechecker.activities.main.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
