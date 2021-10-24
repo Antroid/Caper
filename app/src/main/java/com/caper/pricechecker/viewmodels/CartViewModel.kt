@@ -28,6 +28,7 @@ constructor() : ViewModel() {
         cartItems[shoppingItem.id]?.let{
             it.quantity++
         }
+        calculateTotal()
     }
 
     fun updateItem(item: ShoppingItem){

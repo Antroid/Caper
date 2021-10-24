@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import com.caper.pricechecker.activities.MainActivity
 import dagger.android.support.DaggerFragment
 
 abstract class BaseFragment : DaggerFragment() {
@@ -29,7 +30,14 @@ abstract class BaseFragment : DaggerFragment() {
     //for observables that will be used for populating fields from internet/database calls
     abstract fun initObservables()
 
+    abstract fun getFragTag(): String
+
+    private fun refreshOptionMenu(){
+        (requireActivity() as MainActivity).changeOptionMenuByCurrentFragment()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        refreshOptionMenu()
         initObservables()
         initUI()
         initLogic()

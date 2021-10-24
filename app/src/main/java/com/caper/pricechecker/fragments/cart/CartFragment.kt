@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.caper.pricechecker.Consts
 import com.caper.pricechecker.R
+import com.caper.pricechecker.activities.MainActivity
 import com.caper.pricechecker.fragments.base.BaseFragment
 import com.caper.pricechecker.interfaces.CartItemClick
 import com.caper.pricechecker.modal.local.ShoppingItem
@@ -18,9 +19,11 @@ class CartFragment: BaseFragment(), CartItemClick {
 
     companion object{
         const val TAG = "CartFragment"
-        fun newInstance(shoppingItem: ShoppingItem): CartFragment{
+        fun newInstance(shoppingItem: ShoppingItem?): CartFragment{
             val bundle = Bundle()
-            bundle.putParcelable(Consts.ITEM_SELECTED_TO_CARD_KEY, shoppingItem)
+            shoppingItem?.let{
+                bundle.putParcelable(Consts.ITEM_SELECTED_TO_CARD_KEY, shoppingItem)
+            }
             val cartFragment = CartFragment()
             cartFragment.arguments = bundle
             return cartFragment
@@ -48,7 +51,7 @@ class CartFragment: BaseFragment(), CartItemClick {
     }
 
     override fun initUI() {
-        adapter = CartItemsAdapter(this)
+        adapter = CartItemsAdapter(requireActivity().applicationContext, this)
         val shoppingLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         cartRecycleViewItems.layoutManager = shoppingLayoutManager
         cartRecycleViewItems.adapter = adapter
@@ -60,11 +63,12 @@ class CartFragment: BaseFragment(), CartItemClick {
                 val selectedShoppingItem = it.getParcelable<ShoppingItem>(Consts.ITEM_SELECTED_TO_CARD_KEY)
                 selectedShoppingItem?.let{ shoppingItem ->
                     cartViewModel.addCartItem(shoppingItem)
-                    val shoppingItems = cartViewModel.getShoppingCart()
-                    adapter.setData(shoppingItems)
                 }
-                changeComponentsVisibility()
+                it.remove(Consts.ITEM_SELECTED_TO_CARD_KEY)
             }
+            val shoppingItems = cartViewModel.getShoppingCart()
+            adapter.setData(shoppingItems)
+            changeComponentsVisibility()
         }
 
     }
@@ -87,6 +91,10 @@ class CartFragment: BaseFragment(), CartItemClick {
 
         changeComponentsVisibility()
 
+    }
+
+    override fun getFragTag(): String {
+        return TAG
     }
 
     private fun changeComponentsVisibility() {

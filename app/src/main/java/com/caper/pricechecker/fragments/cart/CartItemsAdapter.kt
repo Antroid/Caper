@@ -2,6 +2,7 @@ package com.caper.pricechecker.fragments.cart
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,7 @@ import com.caper.pricechecker.interfaces.CartItemClick
 import com.caper.pricechecker.modal.local.ShoppingItem
 import com.caper.pricechecker.modal.local.ShoppingItems
 
-class CartItemsAdapter(val listener: CartItemClick): RecyclerView.Adapter<CartItemsAdapter.CartHolder>() {
+class CartItemsAdapter(val context: Context, val listener: CartItemClick): RecyclerView.Adapter<CartItemsAdapter.CartHolder>() {
 
     private var data = ShoppingItems()
 
@@ -42,7 +43,7 @@ class CartItemsAdapter(val listener: CartItemClick): RecyclerView.Adapter<CartIt
 
         fun bind(position: Int, cartItem: ShoppingItem) {
             itemName.text = cartItem.name
-            Glide.with(itemPoster.context).load(cartItem.thumbnail).into(itemPoster)
+            Glide.with(context).load(cartItem.thumbnail).into(itemPoster)
             itemPrice.text = itemPrice.context.getString(R.string.price_holder, cartItem.price)
             itemQuality.text = cartItem.quantity.toString()
             add.setOnClickListener {

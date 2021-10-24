@@ -29,8 +29,6 @@ class ShoppingFragment: BaseFragment(), ShoppingItemClick {
 
     private lateinit var adapter: ShoppingItemsAdapter
 
-    private var selectedItemIndex = -1
-
     private lateinit var mainViewModel: MainViewModel
 
     override fun layoutRes(): Int {
@@ -42,25 +40,29 @@ class ShoppingFragment: BaseFragment(), ShoppingItemClick {
     }
 
     override fun initUI() {
-        adapter = ShoppingItemsAdapter(this)
+        adapter = ShoppingItemsAdapter(requireActivity().applicationContext,this)
         val shoppingLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         shoppingRecycleViewItems.layoutManager = shoppingLayoutManager
         shoppingRecycleViewItems.adapter = adapter
 
         addToCartBtn.setOnClickListener{
-            if(selectedItemIndex == NO_ITEM_INDEX_SELECTED){
+            if(mainViewModel.selectedItemIndex == NO_ITEM_INDEX_SELECTED){
                 Toast.makeText(requireContext(), getString(R.string.no_item_selected), Toast.LENGTH_LONG).show()
             }else{
-                val selectedItem = adapter.getItem(selectedItemIndex)
+                val selectedItem = adapter.getItem(mainViewModel.selectedItemIndex)
                 selectedItem.isSelected = false
-                selectedItemIndex = NO_ITEM_INDEX_SELECTED
+                mainViewModel.selectedItemIndex = NO_ITEM_INDEX_SELECTED
                 val cartFragment = CartFragment.newInstance(selectedItem)
                 activity?.let {
-                    (it as MainActivity).showFragment(cartFragment, TAG)
+                    (it as MainActivity).showFragment(cartFragment)
                 }
             }
         }
 
+    }
+
+    override fun getFragTag(): String {
+        return TAG
     }
 
     override fun initObservables() {
@@ -76,17 +78,20 @@ class ShoppingFragment: BaseFragment(), ShoppingItemClick {
     }
 
     override fun onItemClick(index: Int) {
-        if (selectedItemIndex != NO_ITEM_INDEX_SELECTED) {
-            mainViewModel.shoppingItems.value?.get(selectedItemIndex)?.isSelected = false
-            if (selectedItemIndex < adapter.itemCount) {
-                adapter.changeSelectedState(selectedItemIndex, false)
+        with(mainViewModel)
+        {
+            if (selectedItemIndex != NO_ITEM_INDEX_SELECTED) {
+                shoppingItems.value?.get(selectedItemIndex)?.isSelected = false
+                if (selectedItemIndex < adapter.itemCount) {
+                    adapter.changeSelectedState(selectedItemIndex, false)
+                }
             }
-        }
-        if (selectedItemIndex != index) {
-            adapter.changeSelectedState(index, true)
-            selectedItemIndex = index
-        }else{
-            selectedItemIndex = NO_ITEM_INDEX_SELECTED
+            if (selectedItemIndex != index) {
+                adapter.changeSelectedState(index, true)
+                selectedItemIndex = index
+            } else {
+                selectedItemIndex = NO_ITEM_INDEX_SELECTED
+            }
         }
     }
 

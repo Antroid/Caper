@@ -2,6 +2,7 @@ package com.caper.pricechecker.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.caper.pricechecker.fragments.shopping.ShoppingFragment
 import com.caper.pricechecker.modal.local.ShoppingItems
 import com.caper.pricechecker.repositories.ShoppingRepo
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +19,8 @@ constructor() : ViewModel() {
     companion object{
         private const val TAG = "MainViewModel"
     }
-
+    var fragmentToOpen: String = ShoppingFragment.TAG
+    var selectedItemIndex = -1
     var filteredItems = MutableLiveData<ShoppingItems>()
     val shoppingItems = MutableLiveData<ShoppingItems>()
     private val disposable: CompositeDisposable = CompositeDisposable()
@@ -26,21 +28,26 @@ constructor() : ViewModel() {
     @Inject
     lateinit var shoppingRepo: ShoppingRepo
 
-    fun getShoppingItems(){
-        disposable.add(shoppingRepo.getShoppingItems().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object: DisposableObserver<ShoppingItems>(){
-                override fun onNext(t: ShoppingItems) {
-                    shoppingItems.value = t
-                }
+    fun getShoppingItems() {
+        if (shoppingItems.value == null) {
+            disposable.add(
+                shoppingRepo.getShoppingItems().subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(object : DisposableObserver<ShoppingItems>() {
+                        override fun onNext(t: ShoppingItems) {
+                            shoppingItems.value = t
+                        }
 
-                override fun onError(e: Throwable) {
-                }
+                        override fun onError(e: Throwable) {
+                        }
 
-                override fun onComplete() {
-                }
-            }))
+                        override fun onComplete() {
+                        }
+                    })
+            )
+        }
     }
+
 
     override fun onCleared() {
         super.onCleared()
