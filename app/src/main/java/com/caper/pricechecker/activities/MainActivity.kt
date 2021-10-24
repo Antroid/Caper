@@ -1,72 +1,44 @@
-package com.caper.pricechecker.activities.main
+package com.caper.pricechecker.activities
 
 import android.app.SearchManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.caper.pricechecker.Consts
 import com.caper.pricechecker.R
-import com.caper.pricechecker.activities.cart.CartActivity
-import com.caper.pricechecker.interfaces.ShoppingItemClick
+import com.caper.pricechecker.fragments.base.BaseFragment
+import com.caper.pricechecker.fragments.shopping.ShoppingFragment
 import com.caper.pricechecker.modal.local.ShoppingItems
-import com.caper.pricechecker.viewmodels.CartViewModel
 import com.caper.pricechecker.viewmodels.MainViewModel
 import com.caper.pricechecker.viewmodels.ViewModelFactory
 import dagger.android.support.DaggerAppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
 
-    companion object{
-        private const val NO_ITEM_INDEX_SELECTED = -1
-    }
+class MainActivity : DaggerAppCompatActivity() {
 
     @set:Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var adapter: ShoppingItemsAdapter
-
-    private var selectedItemIndex = -1
-
-    lateinit var mainViewModel: MainViewModel
-    lateinit var cartViewModel: CartViewModel
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
-        adapter = ShoppingItemsAdapter(this)
-        val shoppingLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        shoppingRecycleViewItems.layoutManager = shoppingLayoutManager
-        shoppingRecycleViewItems.adapter = adapter
+        showFragment(ShoppingFragment.newInstance(), ShoppingFragment.TAG)
 
-        mainViewModel.shoppingItems.observe(this) { data ->
-            adapter.setData(data)
-        }
+    }
 
-        mainViewModel.getShoppingItems()
-
-        addToCartBtn.setOnClickListener{
-            if(selectedItemIndex == NO_ITEM_INDEX_SELECTED){
-                Toast.makeText(this, getString(R.string.no_item_selected),Toast.LENGTH_LONG).show()
-            }else{
-                val intent = Intent(this, CartActivity::class.java)
-                val selectedItem = adapter.getItem(selectedItemIndex)
-                selectedItem.quantity++
-                intent.putExtra(Consts.ITEM_INDEX_SELECTED_TO_CARD, selectedItem)
-                startActivity(intent)
-            }
-        }
-
+    fun showFragment(fragment: BaseFragment, tag: String){
+        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.fragment_container, fragment)
+        ft.addToBackStack(tag)
+        ft.commitAllowingStateLoss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -97,26 +69,22 @@ class MainActivity : DaggerAppCompatActivity(), ShoppingItemClick {
     }
 
     private fun updateSearch(query: String) {
+
         val rawData = mainViewModel.shoppingItems.value?.filter { it.id.contains(query) }?.toMutableList()
         rawData?.let{
             val filteredShoppingItems = ShoppingItems()
             for(item in rawData){
                 filteredShoppingItems += item
             }
-            adapter.setData(filteredShoppingItems)
+            mainViewModel.filteredItems.value = filteredShoppingItems
         }
     }
 
-
-    override fun onItemClick(index: Int) {
-        if (selectedItemIndex != NO_ITEM_INDEX_SELECTED) {
-            adapter.changeSelectedState(selectedItemIndex, false)
-        }
-        if (selectedItemIndex != index) {
-            adapter.changeSelectedState(index, true)
-            selectedItemIndex = index
+    override fun onBackPressed() {
+        if(supportFragmentManager.fragments.isNotEmpty()){
+            supportFragmentManager.popBackStackImmediate()
         }else{
-            selectedItemIndex = NO_ITEM_INDEX_SELECTED
+            super.onBackPressed()
         }
     }
 

@@ -3,14 +3,14 @@ package com.caper.pricechecker.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.caper.pricechecker.modal.local.ShoppingItems
-import com.caper.pricechecker.modal.remote.RemoteShoppingItems
-import com.caper.pricechecker.repositories.LocalShoppingRepo
 import com.caper.pricechecker.repositories.ShoppingRepo
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
+
 
 class MainViewModel @Inject
 constructor() : ViewModel() {
@@ -19,6 +19,7 @@ constructor() : ViewModel() {
         private const val TAG = "MainViewModel"
     }
 
+    var filteredItems = MutableLiveData<ShoppingItems>()
     val shoppingItems = MutableLiveData<ShoppingItems>()
     private val disposable: CompositeDisposable = CompositeDisposable()
 

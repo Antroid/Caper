@@ -21,8 +21,23 @@ constructor() : ViewModel() {
     val total = MutableLiveData<Float>()
     private val cartItems = HashMap<String, ShoppingItem>()
 
+    fun addCartItem(shoppingItem: ShoppingItem) {
+        if(!cartItems.containsKey(shoppingItem.id)){
+            cartItems[shoppingItem.id] = shoppingItem
+        }
+        cartItems[shoppingItem.id]?.let{
+            it.quantity++
+        }
+    }
+
     fun updateItem(item: ShoppingItem){
-        cartItems[item.id] = item
+
+        if(cartItems[item.id]?.quantity == 0){
+            cartItems.remove(item.id)
+        }else {
+            cartItems[item.id] = item
+        }
+
         calculateTotal()
     }
 
@@ -48,6 +63,8 @@ constructor() : ViewModel() {
         }
         this.total.value = total
     }
+
+
 
 
 }

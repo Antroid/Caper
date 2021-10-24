@@ -1,17 +1,12 @@
 package com.caper.pricechecker.di.modules
 
-import com.caper.pricechecker.activities.cart.CartActivity
-import com.caper.pricechecker.activities.main.MainActivity
+import com.caper.pricechecker.activities.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class ActivityBindingModule {
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [(MainFragmentBindingModule::class)])
     internal abstract fun bindMainActivity(): MainActivity
-
-    @ContributesAndroidInjector
-    internal abstract fun bindCartActivity(): CartActivity
-
 }

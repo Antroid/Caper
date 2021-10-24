@@ -1,4 +1,4 @@
-package com.caper.pricechecker.activities.cart
+package com.caper.pricechecker.fragments.cart
 
 
 import android.annotation.SuppressLint
@@ -16,10 +16,6 @@ import com.caper.pricechecker.modal.local.ShoppingItem
 import com.caper.pricechecker.modal.local.ShoppingItems
 
 class CartItemsAdapter(val listener: CartItemClick): RecyclerView.Adapter<CartItemsAdapter.CartHolder>() {
-
-    init {
-        setHasStableIds(true)
-    }
 
     private var data = ShoppingItems()
 
@@ -67,6 +63,11 @@ class CartItemsAdapter(val listener: CartItemClick): RecyclerView.Adapter<CartIt
     fun changeSelectedState(selectedItemIndex: Int, selectedState: Boolean) {
         data[selectedItemIndex].isSelected = selectedState
         notifyItemChanged(selectedItemIndex)
+    }
+
+    fun removeItem(position: Int){
+        data.removeAt(position)
+        notifyItemRemoved(position)
     }
 
 }

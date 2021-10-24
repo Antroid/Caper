@@ -1,4 +1,4 @@
-package com.caper.pricechecker.activities.main
+package com.caper.pricechecker.fragments.shopping
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
