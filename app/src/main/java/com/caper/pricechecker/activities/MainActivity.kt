@@ -94,7 +94,11 @@ class MainActivity : DaggerAppCompatActivity() {
         val menuIsVisible = mainViewModel.fragmentToOpen == ShoppingFragment.TAG
         menu?.let {
             it.findItem(R.id.cart).isVisible = menuIsVisible
-            it.findItem(R.id.search).isVisible = menuIsVisible
+            with(it.findItem(R.id.search)){
+                isVisible = menuIsVisible
+                collapseActionView()
+            }
+
         }
 
     }
